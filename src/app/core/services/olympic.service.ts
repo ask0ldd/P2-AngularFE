@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { Olympic } from '../models/Olympic';
 import { Participation } from '../models/Participation';
+import { ILineChartsDatas } from '../models/ILineChartDatas';
 
 @Injectable({
   providedIn: 'root',
@@ -65,7 +66,7 @@ export class OlympicService {
   getPieChartDatas$() : Observable<{name : string, value : number} []>{
     return this.getOlympics$().pipe(
       map((datas : Olympic[]) => datas
-        .map((countryDatas : Olympic) => ({name : countryDatas.country, value : countryDatas.participations.reduce((accumulator : number, participation : ISingleEventStats) => accumulator + participation.medalsCount, 0)}))
+        .map((countryDatas : Olympic) => ({name : countryDatas.country, value : countryDatas.participations.reduce((accumulator : number, participation : Participation) => accumulator + participation.medalsCount, 0)}))
       )
     )
   }
