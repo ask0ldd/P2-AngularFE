@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { Olympic } from '../models/Olympic';
 import { Participation } from '../models/Participation';
@@ -11,7 +11,7 @@ import { ILineChartsDatas } from '../models/ILineChartDatas';
 })
 export class OlympicService {
   private olympicUrl = './assets/mock/olympic.json';
-  private olympics$ = new BehaviorSubject<any>(undefined);
+  private olympics$ = new BehaviorSubject<Olympic[]>([]) // soutenance : replace any with undefined | Olympic[]
 
   constructor(private http: HttpClient) {}
 
@@ -20,10 +20,11 @@ export class OlympicService {
       tap((value) => this.olympics$.next(value)),
       catchError((error, caught) => {
         // TODO: improve error handling
-        console.error(error);
         // can be useful to end loading state and let the user know something went wrong
-        this.olympics$.next(null);
-        return caught;
+        this.olympics$.next([]);
+        console.error(error);
+        // return throwError('An error occurred while fetching Olympic data.');
+        return caught
       })
     );
   }
