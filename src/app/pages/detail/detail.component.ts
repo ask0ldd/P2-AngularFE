@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, of, take } from 'rxjs';
+import { Observable, Subscription, of, take } from 'rxjs';
 import { ILineChartsDatas } from 'src/app/core/models/ILineChartDatas';
 import { Olympic } from 'src/app/core/models/Olympic';
 import { OlympicService } from 'src/app/core/services/olympic.service';
@@ -19,8 +19,14 @@ export class DetailComponent implements OnInit {
   totalMedals! : number // ! tell that the property will be assigned in OnInit
   minYaxis! : number
   maxYaxis! : number
+  datas! : string
+  YticksList : number[] = [] /* = [0, 5 , 10, 15, 20]*/
+  maxMedals! : number
+  view : [number, number] = [800, 400]
 
   chartDatas$!: Observable<ILineChartsDatas>
+
+  sub! : Subscription
 
   constructor(private router:Router, private route: ActivatedRoute, private olympicService: OlympicService) { }
 
@@ -37,13 +43,26 @@ export class DetailComponent implements OnInit {
     this.chartDatas$ = this.olympicService.getCountryLineChartDatas$(this.countryName)
 
     // It's not necessary for the variables depending on observables to be observables themselves : https://angular.io/guide/comparing-observables
-    this.chartDatas$.subscribe(datas => {
+    this.sub = this.chartDatas$.subscribe(datas => {
       const medalsList = datas.series?.map(serie => serie.value)
       this.minYaxis = Math.floor((Math.min(...medalsList) / 10)) * 10
       if(this.minYaxis < 0) this.minYaxis = 0
       this.maxYaxis = Math.ceil((Math.max(...medalsList) / 10)) * 10
       this.totalMedals = datas.series.reduce((acc, serie) => acc + serie.value, 0)
+      this.datas = JSON.stringify(datas)
     })
+  }
+
+  ngOnDestroy():void{
+    this.sub.unsubscribe()
+  }
+
+  onResize(event : UIEvent) : [number, number] { // show not only take into account resize but initialsize too
+    const windowWidth = (event.target as Window).innerWidth
+    if(windowWidth <= 420) return this.view = [300, 300]
+    if(windowWidth <= 600) return this.view = [400, 300]
+    if(windowWidth <= 1200) return this.view = [600, 400]
+    return this.view = [800, 400]
   }
 
 }
