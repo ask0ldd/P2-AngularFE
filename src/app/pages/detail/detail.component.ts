@@ -5,11 +5,11 @@ import { Olympic } from 'src/app/core/models/Olympic';
 import { OlympicService } from 'src/app/core/services/olympic.service';
 
 @Component({
-  selector: 'app-country-stats',
-  templateUrl: './country-stats.component.html',
-  styleUrls: ['./country-stats.component.scss']
+  selector: 'app-detail',
+  templateUrl: './detail.component.html',
+  styleUrls: ['./detail.component.scss']
 })
-export class CountryStatsComponent implements OnInit {
+export class DetailComponent implements OnInit {
 
   public olympics$: Observable<undefined | Olympic[]> = of(undefined);
   public lineChartDatas$ : Observable<null | ILineChartsDatas> = of(null);
