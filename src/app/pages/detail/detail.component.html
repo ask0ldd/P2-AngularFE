@@ -1,4 +1,4 @@
-<main class="mainLineChart" *ngIf="chartDatas$ | async as datas" (window:resize)="onResize($event)">
+<main class="mainLineChart" *ngIf="datas" (window:resize)="onResize($event)">
     <div class="titlenStatsContainer">
         <h1>{{countryName}} | dont forget back button</h1>
         <div class="statsCells">

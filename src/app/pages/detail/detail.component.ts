@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, Subscription, of, take } from 'rxjs';
+import { Observable, Subscription, catchError, of, take, throwError } from 'rxjs';
 import { ILineChartsDatas } from 'src/app/core/models/ILineChartDatas';
 import { Olympic } from 'src/app/core/models/Olympic';
 import { OlympicService } from 'src/app/core/services/olympic.service';
@@ -19,7 +19,7 @@ export class DetailComponent implements OnInit {
   totalMedals! : number // ! tell that the property will be assigned in OnInit
   minYaxis! : number
   maxYaxis! : number
-  datas! : string
+  datas! : ILineChartsDatas
   YticksList : number[] = [] /* = [0, 5 , 10, 15, 20]*/
   maxMedals! : number
   view : [number, number] = [800, 400]
@@ -42,16 +42,28 @@ export class DetailComponent implements OnInit {
     }
 
     // It's not necessary for the variables depending on observables to be observables themselves : https://angular.io/guide/comparing-observables
-    this.subs.push(this.olympicService.getCountryLineChartDatas$(this.countryName).subscribe(datas => {
+    this.subs.push(this.olympicService.getCountryLineChartDatas$(this.countryName).pipe(take(2),
+    catchError(error => {
+      // Handle the error here, for example:
+      console.error('An error occurred: ', error);
+      return throwError('Something went wrong');
+    }))
+    .subscribe(datas => {
       const medalsList = datas.series?.map(serie => serie.value)
       this.minYaxis = Math.floor((Math.min(...medalsList) / 10)) * 10
       if(this.minYaxis < 0) this.minYaxis = 0
       this.maxYaxis = Math.ceil((Math.max(...medalsList) / 10)) * 10
       this.totalMedals = datas.series.reduce((acc, serie) => acc + serie.value, 0)
-      this.datas = JSON.stringify(datas)
+      this.datas = datas
     }))
 
-    this.subs.push(this.olympicService.getCountryTotalAthletes$(this.countryName).subscribe(totalAthletes => {
+    this.subs.push(this.olympicService.getCountryTotalAthletes$(this.countryName).pipe(take(2),
+    catchError(error => {
+      // Handle the error here, for example:
+      console.error('An error occurred: ', error);
+      return throwError('Something went wrong');
+    }))
+    .subscribe(totalAthletes => {
       this.totalAthletes = totalAthletes
     }))
   }
