@@ -23,10 +23,11 @@ export class DetailComponent implements OnInit {
   YticksList : number[] = [] /* = [0, 5 , 10, 15, 20]*/
   maxMedals! : number
   view : [number, number] = [800, 400]
+  totalAthletes! : number 
 
   chartDatas$!: Observable<ILineChartsDatas>
 
-  sub! : Subscription
+  subs! : Subscription[]
 
   constructor(private router:Router, private route: ActivatedRoute, private olympicService: OlympicService) { }
 
@@ -40,21 +41,23 @@ export class DetailComponent implements OnInit {
       return
     }
 
-    this.chartDatas$ = this.olympicService.getCountryLineChartDatas$(this.countryName)
-
     // It's not necessary for the variables depending on observables to be observables themselves : https://angular.io/guide/comparing-observables
-    this.sub = this.chartDatas$.subscribe(datas => {
+    this.subs.push(this.olympicService.getCountryLineChartDatas$(this.countryName).subscribe(datas => {
       const medalsList = datas.series?.map(serie => serie.value)
       this.minYaxis = Math.floor((Math.min(...medalsList) / 10)) * 10
       if(this.minYaxis < 0) this.minYaxis = 0
       this.maxYaxis = Math.ceil((Math.max(...medalsList) / 10)) * 10
       this.totalMedals = datas.series.reduce((acc, serie) => acc + serie.value, 0)
       this.datas = JSON.stringify(datas)
-    })
+    }))
+
+    this.subs.push(this.olympicService.getCountryTotalAthletes$(this.countryName).subscribe(totalAthletes => {
+      this.totalAthletes = totalAthletes
+    }))
   }
 
   ngOnDestroy():void{
-    this.sub.unsubscribe()
+    this.subs.forEach(sub => sub.unsubscribe())
   }
 
   onResize(event : UIEvent) : [number, number] { // show not only take into account resize but initialsize too

@@ -8,17 +8,17 @@
             </div>
             <div>
                 <p>Total number of medals</p>
-                <p class="stat">{{totalMedals$ | async}}</p>
+                <p class="stat">{{totalMedals}}</p>
             </div>
             <div>
                 <p>Total number of athletes</p>
-                <p class="stat">{{totalAthletes$ | async}}</p>
+                <p class="stat">{{totalAthletes}}</p>
             </div>
         </div>
     </div>
-    <ngx-charts-line-chart [trimXAxisTicks]="true" [trimYAxisTicks]="true" 
+    <!--<ngx-charts-line-chart [trimXAxisTicks]="true" [trimYAxisTicks]="true" 
     [results]="[datas]" [xAxis]="true" [autoScale]="false" [yAxis]="true" [showGridLines]="true" 
     [view]="view" [yScaleMin]="minYaxis" [yScaleMax]="maxYaxis"
     [yAxisTicks]="YticksList" [xAxisLabel]="'Dates'" [showXAxisLabel]="true">
-    </ngx-charts-line-chart>
+    </ngx-charts-line-chart>-->
 </main>
