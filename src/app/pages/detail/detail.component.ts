@@ -27,7 +27,7 @@ export class DetailComponent implements OnInit {
 
   chartDatas$!: Observable<ILineChartsDatas>
 
-  subs! : Subscription[]
+  subs : Subscription[] = []
 
   constructor(private router:Router, private route: ActivatedRoute, private olympicService: OlympicService) { }
 
@@ -42,7 +42,7 @@ export class DetailComponent implements OnInit {
     }
 
     // It's not necessary for the variables depending on observables to be observables themselves : https://angular.io/guide/comparing-observables
-    this.subs.push(this.olympicService.getCountryLineChartDatas$(this.countryName).pipe(take(2),
+    this.subs.push(this.olympicService.getCountryLineChartDatas$(this.countryName).pipe(take(1),
     catchError(error => {
       // Handle the error here, for example:
       console.error('An error occurred: ', error);
@@ -57,13 +57,7 @@ export class DetailComponent implements OnInit {
       this.datas = datas
     }))
 
-    this.subs.push(this.olympicService.getCountryTotalAthletes$(this.countryName).pipe(take(2),
-    catchError(error => {
-      // Handle the error here, for example:
-      console.error('An error occurred: ', error);
-      return throwError('Something went wrong');
-    }))
-    .subscribe(totalAthletes => {
+    this.subs.push(this.olympicService.getCountryTotalAthletes$(this.countryName).subscribe(totalAthletes => {
       this.totalAthletes = totalAthletes
     }))
   }

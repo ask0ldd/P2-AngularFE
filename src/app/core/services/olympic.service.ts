@@ -29,6 +29,28 @@ export class OlympicService {
     );
   }
 
+  
+  /* To study 
+  
+  loadInitialData(): Observable<Olympic[]> {
+    if (!this.olympics$) {
+      this.olympics$ = this.http.get<Olympic[]>(this.olympicUrl).pipe(
+        tap((value) => console.log('Fetched data', value)),
+        catchError(this.handleError),
+        shareReplay(1) // Share the data and replay the last emitted value to new subscribers
+      );
+    }
+    return this.olympics$;
+  }
+
+  private handleError(error: any): Observable<never> {
+    console.error('An error occurred', error);
+    // You can perform additional error handling here
+    return throwError('Something went wrong');
+  }
+
+  */
+
   getOlympics$() {
     return this.olympics$.asObservable();
   }
