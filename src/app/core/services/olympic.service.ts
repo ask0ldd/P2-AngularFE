@@ -16,32 +16,42 @@ export class OlympicService {
   private olympicsDatas : Olympic[] = []
 
   constructor(private http: HttpClient) {
-    this.http.get<Olympic[]>(this.olympicUrl).subscribe(data => {
+    /*this.http.get<Olympic[]>(this.olympicUrl).subscribe(data => {
       this.olympicsDatas = data;
     }, catchError((error, caught) => {
       this.olympics$.next([]);
       console.error('An error occurred while fetching Olympic data.');
       return throwError(() => new Error('Something bad happened; please try again later.'));
-    }))
+    }))*/
+
+    /*this.http.get<Olympic[]>(this.olympicUrl).subscribe({
+      next: (v) => this.olympicsDatas = v,
+      error: (e) => console.error(e),
+      complete: () => console.info('complete') 
+    })*/
   }
 
-  /*loadInitialData() {
+  loadInitialData() {
     return this.http.get<Olympic[]>(this.olympicUrl).pipe(
-      tap((value) => this.olympics$.next(value)),
-      catchError((error, caught) => {
+      tap((value) => this.olympics$.next(value)), 
+      catchError(this.handleError)
+      /*catchError((error, caught) => {
         this.olympics$.next([]);
         console.error('An error occurred while fetching Olympic data.');
         return throwError(() => new Error('Something bad happened; please try again later.'));
-      })
+      })*/
     );
-  }*/
-
-  /*
-    private handleError(error: HttpErrorResponse) {
-    console.error('An error occurred while fetching Olympic data.');
-    return throwError(() => new Error('Something bad happened; please try again later.'));
   }
-  */
+
+  private handleError(error: HttpErrorResponse) {
+    // https://angular.io/guide/http-handle-request-errors
+    if (error.status === 0) {
+      console.error('An error occurred:', error.error);
+    } else {
+      console.error(`Backend returned code ${error.status}, body was: `, error.error);
+    }
+    return throwError(() => new Error("Can't load the requested datas."));
+  }
 
   /* To study 
   
