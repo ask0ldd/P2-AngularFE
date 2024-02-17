@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
@@ -11,7 +11,7 @@ import { ILineChartsDatas } from '../models/ILineChartDatas';
 })
 export class OlympicService {
   private olympicUrl = './assets/mock/olympic.json';
-  private olympics$ = new BehaviorSubject<Olympic[]>([]) // soutenance : replace any with undefined | Olympic[]
+  private olympics$ = new BehaviorSubject<Olympic[]>([]) // soutenance : replace any with Olympic[]
 
   constructor(private http: HttpClient) {}
 
@@ -19,17 +19,36 @@ export class OlympicService {
     return this.http.get<Olympic[]>(this.olympicUrl).pipe(
       tap((value) => this.olympics$.next(value)),
       catchError((error, caught) => {
-        // TODO: improve error handling
-        // can be useful to end loading state and let the user know something went wrong
         this.olympics$.next([]);
-        console.error(error);
-        // return throwError('An error occurred while fetching Olympic data.');
-        return caught
+        console.error('An error occurred while fetching Olympic data.');
+        return throwError(() => new Error('Something bad happened; please try again later.'));
       })
     );
   }
 
-  
+  /*private handleError(error: HttpErrorResponse) {
+    console.error('An error occurred while fetching Olympic data.');
+    return throwError(() => new Error('Something bad happened; please try again later.'));
+  }*/
+
+  /*
+
+    getData(): Observable<any> {
+    return this.http.get<any>(this.url).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  private handleError(error: HttpErrorResponse) {
+    // Handle the error and end the loading state
+    console.error('An error occurred:', error);
+    // You can perform other error handling tasks here
+    return throwError('Something bad happened; please try again later.');
+  }
+
+  */
+
+
   /* To study 
   
   loadInitialData(): Observable<Olympic[]> {
